@@ -1,0 +1,642 @@
+This R markdown file can be used to visually assess the representation comparisons between Company and the talent pool
+
+libraries
+```{r}
+library(dplyr)
+library(ggplot2)
+library(janitor)
+library(tidyr)
+```
+
+
+## Comparing Company's Current Representation of Women and People of Color with the Representation seen in the Talent Pool
+
+```{r}
+load("../data/Comparison data/poc_comparison.rda")
+poc_representation <- gather(poc_representation, key = "Department", value = representation, c(1:6)) %>% 
+  filter(group == "both sexes") %>% 
+  filter(area == "Baseline Representation" | area == "Current Representation") %>% 
+  select(-1)
+poc_representation$group <- "People of Color"
+
+load("../data/Comparison data/women_comparison.rda")
+women_representation <- gather(women_representation, key = "Department", value = representation, c(1:8)) %>% 
+  filter(area == "Baseline Representation" | area == "Current Representation")
+women_representation$group <- "Women"
+
+compare <- bind_rows(women_representation, poc_representation)
+
+compare$width <- ifelse(compare$area == "Baseline Representation", 0.7, 0.3)
+
+plot <- compare %>% 
+  ggplot() +
+  geom_bar(aes(group, representation, fill = area),
+           width = compare$width,
+           position = "dodge",
+           stat = "identity") + 
+  facet_grid(~factor(Department, levels = c("Overall", "Engineering", "Marketing", "Sales", "Human Resources", "Legal", "APAC", "EMEA"))) +
+  scale_fill_manual(values = c("#339966", "#33CCCC")) +
+  xlab("Company Department") +
+  ylab("Representation") + theme(axis.text.x = element_text(angle = 45)) +
+  ggtitle("Comparing Company's Representation of Women and People of Color to Talent Pool") 
+
+plot + geom_text(aes(x = group, y = representation, label = paste0(100 * round(representation, digits = 4), "%")), 
+                 position = position_dodge(width = .5), vjust = .25)
+```
+
+
+## Comparing Company's Current Representation of Distinct Ethnic Groups with the Representation seen in the Talent Pool
+```{r, echo = FALSE}
+load("../data/Comparison data/ai_an_comparison.rda")
+ai_an_representation <- gather(ai_an_representation, key = "Department", value = representation, c(1:6)) %>% 
+  filter(group == "both sexes") %>% 
+  filter(area == "Baseline Representation" | area == "Current Representation") %>% 
+  select(-1)
+ai_an_representation$group <- "American Indian"
+ai_an_representation$width <- ifelse(ai_an_representation$area == "Baseline Representation", 0.7, 0.3)
+
+plot <- ai_an_representation %>% 
+  ggplot() +
+  geom_bar(aes(Department, representation, fill = area),
+           width = ai_an_representation$width,
+           position = "dodge",
+           stat = "identity") + 
+  scale_fill_manual(values = c("#339966", "#33CCCC")) +
+  xlab("Company Department") +
+  ylab("Representation") + theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("Comparing Company's Representation of American Indian or Alaskka Native to Talent Pool") 
+
+plot + geom_text(aes(x = Department, y = representation, label = paste0(100 * round(representation, digits = 4), "%")), 
+                 position = position_dodge(width = .5), vjust = .25)
+
+load("../data/Comparison data/asian_comparison.rda")
+asian_representation <- gather(asian_representation, key = "Department", value = representation, c(1:6)) %>% 
+  filter(group == "both sexes") %>% 
+  filter(area == "Baseline Representation" | area == "Current Representation") %>% 
+  select(-1)
+asian_representation$group <- "Asian"
+asian_representation$width <- ifelse(asian_representation$area == "Baseline Representation", 0.7, 0.3)
+
+
+plot <- asian_representation %>% 
+  ggplot() +
+  geom_bar(aes(Department, representation, fill = area),
+           width = asian_representation$width,
+           position = "dodge",
+           stat = "identity") + 
+  scale_fill_manual(values = c("#339966", "#33CCCC")) +
+  xlab("Company Department") +
+  ylab("Representation") + theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("Comparing Company's Representation of Asian to Talent Pool") 
+
+plot + geom_text(aes(x = Department, y = representation, label = paste0(100 * round(representation, digits = 4), "%")), 
+                 position = position_dodge(width = .5), vjust = .25)
+
+
+load("../data/Comparison data/black_comparison.rda")
+black_representation <- gather(black_representation, key = "Department", value = representation, c(1:6)) %>% 
+  filter(group == "both sexes") %>% 
+  filter(area == "Baseline Representation" | area == "Current Representation") %>% 
+  select(-1)
+black_representation$group <- "Black"
+black_representation$width <- ifelse(black_representation$area == "Baseline Representation", 0.7, 0.3)
+
+
+
+plot <- black_representation %>% 
+  ggplot() +
+  geom_bar(aes(Department, representation, fill = area),
+           width = black_representation$width,
+           position = "dodge",
+           stat = "identity") + 
+  scale_fill_manual(values = c("#339966", "#33CCCC")) +
+  xlab("Company Department") +
+  ylab("Representation") + theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("Comparing Company's Representation of Black to Talent Pool") 
+
+plot + geom_text(aes(x = Department, y = representation, label = paste0(100 * round(representation, digits = 4), "%")), 
+                 position = position_dodge(width = .5), vjust = .25)
+
+
+
+load("../data/Comparison data/hispanic_comparison.rda")
+hispanic_representation <- gather(hispanic_representation, key = "Department", value = representation, c(1:6)) %>% 
+  filter(group == "both sexes") %>% 
+  filter(area == "Baseline Representation" | area == "Current Representation") %>% 
+  select(-1)
+hispanic_representation$group <- "Hispanic"
+hispanic_representation$width <- ifelse(hispanic_representation$area == "Baseline Representation", 0.7, 0.3)
+
+plot <- hispanic_representation %>% 
+  ggplot() +
+  geom_bar(aes(Department, representation, fill = area),
+           width = hispanic_representation$width,
+           position = "dodge",
+           stat = "identity") + 
+  scale_fill_manual(values = c("#339966", "#33CCCC")) +
+  xlab("Company Department") +
+  ylab("Representation") + theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("Comparing Company's Representation of Hispanic to Talent Pool") 
+
+plot + geom_text(aes(x = Department, y = representation, label = paste0(100 * round(representation, digits = 4), "%")), 
+                 position = position_dodge(width = .5), vjust = .25)
+
+
+
+load("../data/Comparison data/multiple_comparison.rda")
+multiple_representation <- gather(multiple_representation, key = "Department", value = representation, c(1:6)) %>% 
+  filter(group == "both sexes") %>% 
+  filter(area == "Baseline Representation" | area == "Current Representation") %>% 
+  select(-1)
+multiple_representation$group <- "Multiple Races"
+multiple_representation$width <- ifelse(multiple_representation$area == "Baseline Representation", 0.7, 0.3)
+
+
+plot <- multiple_representation %>% 
+  ggplot() +
+  geom_bar(aes(Department, representation, fill = area),
+           width = multiple_representation$width,
+           position = "dodge",
+           stat = "identity") + 
+  scale_fill_manual(values = c("#339966", "#33CCCC")) +
+  xlab("Company Department") +
+  ylab("Representation") + theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("Comparing Company's Representation of Multiple Races to Talent Pool") 
+
+plot + geom_text(aes(x = Department, y = representation, label = paste0(100 * round(representation, digits = 4), "%")), 
+                 position = position_dodge(width = .5), vjust = .25)
+
+
+
+load("../data/Comparison data/hawaiian_comparison.rda")
+hawaiian_representation <- gather(hawaiian_representation, key = "Department", value = representation, c(1:6)) %>% 
+  filter(group == "both sexes") %>% 
+  filter(area == "Baseline Representation" | area == "Current Representation") %>% 
+  select(-1)
+hawaiian_representation$group <- "Native Hawaiian"
+hawaiian_representation$width <- ifelse(hawaiian_representation$area == "Baseline Representation", 0.7, 0.3)
+
+
+plot <- hawaiian_representation %>% 
+  ggplot() +
+  geom_bar(aes(Department, representation, fill = area),
+           width = hawaiian_representation$width,
+           position = "dodge",
+           stat = "identity") + 
+  scale_fill_manual(values = c("#339966", "#33CCCC")) +
+  xlab("Company Department") +
+  ylab("Representation") + theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("Comparing Company's Representation of Native Hawaiian or Other Pacific Islander to Talent Pool") 
+
+plot + geom_text(aes(x = Department, y = representation, label = paste0(100 * round(representation, digits = 4), "%")), 
+                 position = position_dodge(width = .5), vjust = .25)
+
+
+load("../data/Comparison data/unknown_comparison.rda")
+unknown_representation <- gather(unknown_representation, key = "Department", value = representation, c(1:6)) %>% 
+  filter(group == "both sexes") %>% 
+  filter(area == "Baseline Representation" | area == "Current Representation") %>% 
+  select(-1)
+unknown_representation$group <- "Unknown"
+unknown_representation$width <- ifelse(unknown_representation$area == "Baseline Representation", 0.7, 0.3)
+
+
+plot <- unknown_representation %>% 
+  ggplot() +
+  geom_bar(aes(Department, representation, fill = area),
+           width = unknown_representation$width,
+           position = "dodge",
+           stat = "identity") + 
+  scale_fill_manual(values = c("#339966", "#33CCCC")) +
+  xlab("Company Department") +
+  ylab("Representation") + theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("Comparing Company's Representation of Unkown to Talent Pool") 
+
+plot + geom_text(aes(x = Department, y = representation, label = paste0(100 * round(representation, digits = 4), "%")), 
+                 position = position_dodge(width = .5), vjust = .25)
+
+
+
+load("../data/Comparison data/white_comparison.rda")
+white_representation <- gather(white_representation, key = "Department", value = representation, c(1:6)) %>%
+  filter(group == "both sexes") %>%
+  filter(area == "Baseline Representation" | area == "Current Representation") %>%
+  select(-1)
+white_representation$group <- "White"
+white_representation$width <- ifelse(white_representation$area == "Baseline Representation", 0.7, 0.3)
+
+
+
+
+plot <- white_representation %>% 
+  ggplot() +
+  geom_bar(aes(Department, representation, fill = area),
+           width = white_representation$width,
+           position = "dodge",
+           stat = "identity") + 
+  scale_fill_manual(values = c("#339966", "#33CCCC")) +
+  xlab("Company Department") +
+  ylab("Representation") + theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("Comparing Company's Representation of White to Talent Pool") 
+
+plot + geom_text(aes(x = Department, y = representation, label = paste0(100 * round(representation, digits = 4), "%")), 
+                 position = position_dodge(width = .5), vjust = .25)
+```
+
+
+## Comparing Company's Current Representation of Distinct Ethnic Groups Filtered by Women with the Representation seen in the Talent Pool
+```{r, echo = FALSE}
+load("../data/Comparison data/ai_an_comparison.rda")
+ai_an_representation <- gather(ai_an_representation, key = "Department", value = representation, c(1:6)) %>% 
+  filter(group == "women") %>% 
+  filter(area == "Baseline Representation" | area == "Current Representation") %>% 
+  select(-1)
+ai_an_representation$group <- "American Indian"
+ai_an_representation$width <- ifelse(ai_an_representation$area == "Baseline Representation", 0.7, 0.3)
+
+plot <- ai_an_representation %>% 
+  ggplot() +
+  geom_bar(aes(Department, representation, fill = area),
+           width = ai_an_representation$width,
+           position = "dodge",
+           stat = "identity") + 
+  scale_fill_manual(values = c("#339966", "#33CCCC")) +
+  xlab("Company Department") +
+  ylab("Representation") + theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("Comparing Company's Representation of American Indian or Alaskka Native to Talent Pool") 
+
+plot + geom_text(aes(x = Department, y = representation, label = paste0(100 * round(representation, digits = 4), "%")), 
+                 position = position_dodge(width = .5), vjust = .25)
+
+load("../data/Comparison data/asian_comparison.rda")
+asian_representation <- gather(asian_representation, key = "Department", value = representation, c(1:6)) %>% 
+  filter(group == "women") %>% 
+  filter(area == "Baseline Representation" | area == "Current Representation") %>% 
+  select(-1)
+asian_representation$group <- "Asian"
+asian_representation$width <- ifelse(asian_representation$area == "Baseline Representation", 0.7, 0.3)
+
+
+plot <- asian_representation %>% 
+  ggplot() +
+  geom_bar(aes(Department, representation, fill = area),
+           width = asian_representation$width,
+           position = "dodge",
+           stat = "identity") + 
+  scale_fill_manual(values = c("#339966", "#33CCCC")) +
+  xlab("Company Department") +
+  ylab("Representation") + theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("Comparing Company's Representation of Asian to Talent Pool") 
+
+plot + geom_text(aes(x = Department, y = representation, label = paste0(100 * round(representation, digits = 4), "%")), 
+                 position = position_dodge(width = .5), vjust = .25)
+
+
+load("../data/Comparison data/black_comparison.rda")
+black_representation <- gather(black_representation, key = "Department", value = representation, c(1:6)) %>% 
+  filter(group == "women") %>% 
+  filter(area == "Baseline Representation" | area == "Current Representation") %>% 
+  select(-1)
+black_representation$group <- "Black"
+black_representation$width <- ifelse(black_representation$area == "Baseline Representation", 0.7, 0.3)
+
+
+
+plot <- black_representation %>% 
+  ggplot() +
+  geom_bar(aes(Department, representation, fill = area),
+           width = black_representation$width,
+           position = "dodge",
+           stat = "identity") + 
+  scale_fill_manual(values = c("#339966", "#33CCCC")) +
+  xlab("Company Department") +
+  ylab("Representation") + theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("Comparing Company's Representation of Black to Talent Pool") 
+
+plot + geom_text(aes(x = Department, y = representation, label = paste0(100 * round(representation, digits = 4), "%")), 
+                 position = position_dodge(width = .5), vjust = .25)
+
+
+
+load("../data/Comparison data/hispanic_comparison.rda")
+hispanic_representation <- gather(hispanic_representation, key = "Department", value = representation, c(1:6)) %>% 
+  filter(group == "women") %>% 
+  filter(area == "Baseline Representation" | area == "Current Representation") %>% 
+  select(-1)
+hispanic_representation$group <- "Hispanic"
+hispanic_representation$width <- ifelse(hispanic_representation$area == "Baseline Representation", 0.7, 0.3)
+
+plot <- hispanic_representation %>% 
+  ggplot() +
+  geom_bar(aes(Department, representation, fill = area),
+           width = hispanic_representation$width,
+           position = "dodge",
+           stat = "identity") + 
+  scale_fill_manual(values = c("#339966", "#33CCCC")) +
+  xlab("Company Department") +
+  ylab("Representation") + theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("Comparing Company's Representation of Hispanic to Talent Pool") 
+
+plot + geom_text(aes(x = Department, y = representation, label = paste0(100 * round(representation, digits = 4), "%")), 
+                 position = position_dodge(width = .5), vjust = .25)
+
+
+
+load("../data/Comparison data/multiple_comparison.rda")
+multiple_representation <- gather(multiple_representation, key = "Department", value = representation, c(1:6)) %>% 
+  filter(group == "women") %>% 
+  filter(area == "Baseline Representation" | area == "Current Representation") %>% 
+  select(-1)
+multiple_representation$group <- "Multiple Races"
+multiple_representation$width <- ifelse(multiple_representation$area == "Baseline Representation", 0.7, 0.3)
+
+
+plot <- multiple_representation %>% 
+  ggplot() +
+  geom_bar(aes(Department, representation, fill = area),
+           width = multiple_representation$width,
+           position = "dodge",
+           stat = "identity") + 
+  scale_fill_manual(values = c("#339966", "#33CCCC")) +
+  xlab("Company Department") +
+  ylab("Representation") + theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("Comparing Company's Representation of Multiple Races to Talent Pool") 
+
+plot + geom_text(aes(x = Department, y = representation, label = paste0(100 * round(representation, digits = 4), "%")), 
+                 position = position_dodge(width = .5), vjust = .25)
+
+
+
+load("../data/Comparison data/hawaiian_comparison.rda")
+hawaiian_representation <- gather(hawaiian_representation, key = "Department", value = representation, c(1:6)) %>% 
+  filter(group == "women") %>% 
+  filter(area == "Baseline Representation" | area == "Current Representation") %>% 
+  select(-1)
+hawaiian_representation$group <- "Native Hawaiian"
+hawaiian_representation$width <- ifelse(hawaiian_representation$area == "Baseline Representation", 0.7, 0.3)
+
+
+plot <- hawaiian_representation %>% 
+  ggplot() +
+  geom_bar(aes(Department, representation, fill = area),
+           width = hawaiian_representation$width,
+           position = "dodge",
+           stat = "identity") + 
+  scale_fill_manual(values = c("#339966", "#33CCCC")) +
+  xlab("Company Department") +
+  ylab("Representation") + theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("Comparing Company's Representation of Native Hawaiian or Other Pacific Islander to Talent Pool") 
+
+plot + geom_text(aes(x = Department, y = representation, label = paste0(100 * round(representation, digits = 4), "%")), 
+                 position = position_dodge(width = .5), vjust = .25)
+
+
+load("../data/Comparison data/unknown_comparison.rda")
+unknown_representation <- gather(unknown_representation, key = "Department", value = representation, c(1:6)) %>% 
+  filter(group == "women") %>% 
+  filter(area == "Baseline Representation" | area == "Current Representation") %>% 
+  select(-1)
+unknown_representation$group <- "Unknown"
+unknown_representation$width <- ifelse(unknown_representation$area == "Baseline Representation", 0.7, 0.3)
+
+
+plot <- unknown_representation %>% 
+  ggplot() +
+  geom_bar(aes(Department, representation, fill = area),
+           width = unknown_representation$width,
+           position = "dodge",
+           stat = "identity") + 
+  scale_fill_manual(values = c("#339966", "#33CCCC")) +
+  xlab("Company Department") +
+  ylab("Representation") + theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("Comparing Company's Representation of Unkown to Talent Pool") 
+
+plot + geom_text(aes(x = Department, y = representation, label = paste0(100 * round(representation, digits = 4), "%")), 
+                 position = position_dodge(width = .5), vjust = .25)
+
+
+
+load("../data/Comparison data/white_comparison.rda")
+white_representation <- gather(white_representation, key = "Department", value = representation, c(1:6)) %>%
+  filter(group == "women") %>%
+  filter(area == "Baseline Representation" | area == "Current Representation") %>%
+  select(-1)
+white_representation$group <- "White"
+white_representation$width <- ifelse(white_representation$area == "Baseline Representation", 0.7, 0.3)
+
+
+
+
+plot <- white_representation %>% 
+  ggplot() +
+  geom_bar(aes(Department, representation, fill = area),
+           width = white_representation$width,
+           position = "dodge",
+           stat = "identity") + 
+  scale_fill_manual(values = c("#339966", "#33CCCC")) +
+  xlab("Company Department") +
+  ylab("Representation") + theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("Comparing Company's Representation of White to Talent Pool") 
+
+plot + geom_text(aes(x = Department, y = representation, label = paste0(100 * round(representation, digits = 4), "%")), 
+                 position = position_dodge(width = .5), vjust = .25)
+```
+
+## Comparing Company's Current Representation of Distinct Ethnic Groups Filtered by Men with the Representation seen in the Talent Pool
+```{r, echo = FALSE}
+load("../data/Comparison data/ai_an_comparison.rda")
+ai_an_representation <- gather(ai_an_representation, key = "Department", value = representation, c(1:6)) %>% 
+  filter(group == "men") %>% 
+  filter(area == "Baseline Representation" | area == "Current Representation") %>% 
+  select(-1)
+ai_an_representation$group <- "American Indian"
+ai_an_representation$width <- ifelse(ai_an_representation$area == "Baseline Representation", 0.7, 0.3)
+
+plot <- ai_an_representation %>% 
+  ggplot() +
+  geom_bar(aes(Department, representation, fill = area),
+           width = ai_an_representation$width,
+           position = "dodge",
+           stat = "identity") + 
+  scale_fill_manual(values = c("#339966", "#33CCCC")) +
+  xlab("Company Department") +
+  ylab("Representation") + theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("Comparing Company's Representation of American Indian or Alaskka Native to Talent Pool") 
+
+plot + geom_text(aes(x = Department, y = representation, label = paste0(100 * round(representation, digits = 4), "%")), 
+                 position = position_dodge(width = .5), vjust = .25)
+
+load("../data/Comparison data/asian_comparison.rda")
+asian_representation <- gather(asian_representation, key = "Department", value = representation, c(1:6)) %>% 
+  filter(group == "men") %>% 
+  filter(area == "Baseline Representation" | area == "Current Representation") %>% 
+  select(-1)
+asian_representation$group <- "Asian"
+asian_representation$width <- ifelse(asian_representation$area == "Baseline Representation", 0.7, 0.3)
+
+
+plot <- asian_representation %>% 
+  ggplot() +
+  geom_bar(aes(Department, representation, fill = area),
+           width = asian_representation$width,
+           position = "dodge",
+           stat = "identity") + 
+  scale_fill_manual(values = c("#339966", "#33CCCC")) +
+  xlab("Company Department") +
+  ylab("Representation") + theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("Comparing Company's Representation of Asian to Talent Pool") 
+
+plot + geom_text(aes(x = Department, y = representation, label = paste0(100 * round(representation, digits = 4), "%")), 
+                 position = position_dodge(width = .5), vjust = .25)
+
+
+load("../data/Comparison data/black_comparison.rda")
+black_representation <- gather(black_representation, key = "Department", value = representation, c(1:6)) %>% 
+  filter(group == "men") %>% 
+  filter(area == "Baseline Representation" | area == "Current Representation") %>% 
+  select(-1)
+black_representation$group <- "Black"
+black_representation$width <- ifelse(black_representation$area == "Baseline Representation", 0.7, 0.3)
+
+
+
+plot <- black_representation %>% 
+  ggplot() +
+  geom_bar(aes(Department, representation, fill = area),
+           width = black_representation$width,
+           position = "dodge",
+           stat = "identity") + 
+  scale_fill_manual(values = c("#339966", "#33CCCC")) +
+  xlab("Company Department") +
+  ylab("Representation") + theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("Comparing Company's Representation of Black to Talent Pool") 
+
+plot + geom_text(aes(x = Department, y = representation, label = paste0(100 * round(representation, digits = 4), "%")), 
+                 position = position_dodge(width = .5), vjust = .25)
+
+
+
+load("../data/Comparison data/hispanic_comparison.rda")
+hispanic_representation <- gather(hispanic_representation, key = "Department", value = representation, c(1:6)) %>% 
+  filter(group == "men") %>% 
+  filter(area == "Baseline Representation" | area == "Current Representation") %>% 
+  select(-1)
+hispanic_representation$group <- "Hispanic"
+hispanic_representation$width <- ifelse(hispanic_representation$area == "Baseline Representation", 0.7, 0.3)
+
+plot <- hispanic_representation %>% 
+  ggplot() +
+  geom_bar(aes(Department, representation, fill = area),
+           width = hispanic_representation$width,
+           position = "dodge",
+           stat = "identity") + 
+  scale_fill_manual(values = c("#339966", "#33CCCC")) +
+  xlab("Company Department") +
+  ylab("Representation") + theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("Comparing Company's Representation of Hispanic to Talent Pool") 
+
+plot + geom_text(aes(x = Department, y = representation, label = paste0(100 * round(representation, digits = 4), "%")), 
+                 position = position_dodge(width = .5), vjust = .25)
+
+
+
+load("../data/Comparison data/multiple_comparison.rda")
+multiple_representation <- gather(multiple_representation, key = "Department", value = representation, c(1:6)) %>% 
+  filter(group == "men") %>% 
+  filter(area == "Baseline Representation" | area == "Current Representation") %>% 
+  select(-1)
+multiple_representation$group <- "Multiple Races"
+multiple_representation$width <- ifelse(multiple_representation$area == "Baseline Representation", 0.7, 0.3)
+
+
+plot <- multiple_representation %>% 
+  ggplot() +
+  geom_bar(aes(Department, representation, fill = area),
+           width = multiple_representation$width,
+           position = "dodge",
+           stat = "identity") + 
+  scale_fill_manual(values = c("#339966", "#33CCCC")) +
+  xlab("Company Department") +
+  ylab("Representation") + theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("Comparing Company's Representation of Multiple Races to Talent Pool") 
+
+plot + geom_text(aes(x = Department, y = representation, label = paste0(100 * round(representation, digits = 4), "%")), 
+                 position = position_dodge(width = .5), vjust = .25)
+
+
+
+load("../data/Comparison data/hawaiian_comparison.rda")
+hawaiian_representation <- gather(hawaiian_representation, key = "Department", value = representation, c(1:6)) %>% 
+  filter(group == "men") %>% 
+  filter(area == "Baseline Representation" | area == "Current Representation") %>% 
+  select(-1)
+hawaiian_representation$group <- "Native Hawaiian"
+hawaiian_representation$width <- ifelse(hawaiian_representation$area == "Baseline Representation", 0.7, 0.3)
+
+
+plot <- hawaiian_representation %>% 
+  ggplot() +
+  geom_bar(aes(Department, representation, fill = area),
+           width = hawaiian_representation$width,
+           position = "dodge",
+           stat = "identity") + 
+  scale_fill_manual(values = c("#339966", "#33CCCC")) +
+  xlab("Company Department") +
+  ylab("Representation") + theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("Comparing Company's Representation of Native Hawaiian or Other Pacific Islander to Talent Pool") 
+
+plot + geom_text(aes(x = Department, y = representation, label = paste0(100 * round(representation, digits = 4), "%")), 
+                 position = position_dodge(width = .5), vjust = .25)
+
+
+load("../data/Comparison data/unknown_comparison.rda")
+unknown_representation <- gather(unknown_representation, key = "Department", value = representation, c(1:6)) %>% 
+  filter(group == "men") %>% 
+  filter(area == "Baseline Representation" | area == "Current Representation") %>% 
+  select(-1)
+unknown_representation$group <- "Unknown"
+unknown_representation$width <- ifelse(unknown_representation$area == "Baseline Representation", 0.7, 0.3)
+
+
+plot <- unknown_representation %>% 
+  ggplot() +
+  geom_bar(aes(Department, representation, fill = area),
+           width = unknown_representation$width,
+           position = "dodge",
+           stat = "identity") + 
+  scale_fill_manual(values = c("#339966", "#33CCCC")) +
+  xlab("Company Department") +
+  ylab("Representation") + theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("Comparing Company's Representation of Unkown to Talent Pool") 
+
+plot + geom_text(aes(x = Department, y = representation, label = paste0(100 * round(representation, digits = 4), "%")), 
+                 position = position_dodge(width = .5), vjust = .25)
+
+
+
+load("../data/Comparison data/white_comparison.rda")
+white_representation <- gather(white_representation, key = "Department", value = representation, c(1:6)) %>%
+  filter(group == "men") %>%
+  filter(area == "Baseline Representation" | area == "Current Representation") %>%
+  select(-1)
+white_representation$group <- "White"
+white_representation$width <- ifelse(white_representation$area == "Baseline Representation", 0.7, 0.3)
+
+
+
+
+plot <- white_representation %>% 
+  ggplot() +
+  geom_bar(aes(Department, representation, fill = area),
+           width = white_representation$width,
+           position = "dodge",
+           stat = "identity") + 
+  scale_fill_manual(values = c("#339966", "#33CCCC")) +
+  xlab("Company Department") +
+  ylab("Representation") + theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("Comparing Company's Representation of White to Talent Pool") 
+
+plot + geom_text(aes(x = Department, y = representation, label = paste0(100 * round(representation, digits = 4), "%")), 
+                 position = position_dodge(width = .5), vjust = .25)
+```
+
